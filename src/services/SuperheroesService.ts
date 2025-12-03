@@ -65,20 +65,22 @@ export class SuperheroesService {
         heroId: number,
         data: UpdateSuperheroDTO
     ) {
+        const { newImages, removeImageIds, ...heroData } = data
+
         const hero = await this.superheroesRepository.update(
             userId,
             heroId,
-            data
+            heroData
         )
 
         if (!hero) return null
 
-        if (data.removeImageIds?.length) {
-            await this.imagesRepository.removeImages(data.removeImageIds)
+        if (removeImageIds?.length) {
+            await this.imagesRepository.removeImages(removeImageIds)
         }
 
-        if (data.newImages?.length) {
-            await this.imagesRepository.createImages(heroId, data.newImages)
+        if (newImages?.length) {
+            await this.imagesRepository.createImages(heroId, newImages)
         }
 
         return this.superheroesRepository.findById(heroId)

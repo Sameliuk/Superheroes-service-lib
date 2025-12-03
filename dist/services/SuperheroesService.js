@@ -35,14 +35,15 @@ export class SuperheroesService {
         return this.superheroesRepository.findById(hero.id);
     }
     async updateSuperhero(userId, heroId, data) {
-        const hero = await this.superheroesRepository.update(userId, heroId, data);
+        const { newImages, removeImageIds, ...heroData } = data;
+        const hero = await this.superheroesRepository.update(userId, heroId, heroData);
         if (!hero)
             return null;
-        if (data.removeImageIds?.length) {
-            await this.imagesRepository.removeImages(data.removeImageIds);
+        if (removeImageIds?.length) {
+            await this.imagesRepository.removeImages(removeImageIds);
         }
-        if (data.newImages?.length) {
-            await this.imagesRepository.createImages(heroId, data.newImages);
+        if (newImages?.length) {
+            await this.imagesRepository.createImages(heroId, newImages);
         }
         return this.superheroesRepository.findById(heroId);
     }
